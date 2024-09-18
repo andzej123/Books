@@ -5,10 +5,12 @@ import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
     @Query("""
@@ -46,7 +48,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query("""
             Select b
             from Book b
-            where b.year >= :from and year <= :to
+            where b.year >= :from and b.year <= :to
             """)
     List<Book> getBooksByYearFromTo(@Param("from") Integer from, @Param("to") Integer to);
 
