@@ -21,6 +21,8 @@ public class Rating {
     private Integer id;
 
     @Column(name = "rating")
+    @Min(value = 1, message = "Rating value must be from 1 to 5")
+    @Max(value = 5, message = "Rating value must be from 1 to 5")
     private Integer rating;
 
     @ManyToOne

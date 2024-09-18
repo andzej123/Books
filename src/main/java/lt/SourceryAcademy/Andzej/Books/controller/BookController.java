@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -45,9 +46,24 @@ public class BookController {
         return bookService.getBooksByYear(bookYear);
     }
 
+    @GetMapping(value = "/filter", params = {"yearFrom", "yearTo"})
+    public List<BookResponseDto> getBooksByYearFromTo(@RequestParam Integer yearFrom, @RequestParam Integer yearTo) {
+        return bookService.getBooksByYearFromTo(yearFrom, yearTo);
+    }
+
     @GetMapping(value = "/filter", params = "bookAuthor")
     public List<BookResponseDto> getBooksByAuthor(@RequestParam String bookAuthor) {
         return bookService.getBooksByAuthor(bookAuthor);
+    }
+
+    @GetMapping(value = "/filter", params = "ratingHigherThan")
+    public List<BookResponseDto> getBooksByRatingHigherThan(@RequestParam Double ratingHigherThan) {
+        return bookService.getBooksByRatingHigherThan(ratingHigherThan);
+    }
+
+    @GetMapping(value = "/filter", params = "ratingLowerThan")
+    public List<BookResponseDto> getBooksByRatingLowerThan(@RequestParam Double ratingLowerThan) {
+        return bookService.getBooksByRatingLowerThan(ratingLowerThan);
     }
 
     @PostMapping
@@ -64,5 +80,6 @@ public class BookController {
     public BookResponseDto deleteBook(@PathVariable Integer id) {
         return bookService.deleteBook(id);
     }
+
 
 }

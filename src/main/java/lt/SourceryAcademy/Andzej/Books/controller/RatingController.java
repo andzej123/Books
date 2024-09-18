@@ -1,7 +1,5 @@
 package lt.SourceryAcademy.Andzej.Books.controller;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lt.SourceryAcademy.Andzej.Books.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +21,7 @@ public class RatingController {
 
     @PostMapping("/book/{bookId}")
     @Validated
-    public ResponseEntity<String> rateBook(
-            @PathVariable Integer bookId,
-            @RequestParam
-            @Min(value = 1, message = "Rating value must be from 1 to 5")
-            @Max(value = 5, message = "Rating value must be from 1 to 5")
-            Integer ratingValue
-    ) {
+    public ResponseEntity<String> rateBook(@PathVariable Integer bookId, @RequestParam Integer ratingValue) {
         return ratingService.rateBook(bookId, ratingValue);
     }
 

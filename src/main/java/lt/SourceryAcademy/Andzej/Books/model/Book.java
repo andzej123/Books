@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Year;
+import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -40,9 +41,15 @@ public class Book {
     private String author;
 
     @Column(name = "rating")
-    @OneToMany(mappedBy = "book")
-    @JsonIgnore
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private Set<Rating> ratings;
 
+    public void add(Rating tempRating) {
+        if (ratings == null) {
+            ratings = new HashSet<>();
+        }
+        ratings.add(tempRating);
+        tempRating.setBook(this);
+    }
 
 }
