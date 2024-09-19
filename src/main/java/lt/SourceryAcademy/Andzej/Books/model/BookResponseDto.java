@@ -1,14 +1,12 @@
 package lt.SourceryAcademy.Andzej.Books.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class BookResponseDto {
 
     private Integer id;

@@ -15,6 +15,10 @@ import lombok.Setter;
 @Table(name = "ratings")
 public class Rating {
 
+    public Rating(Integer rating) {
+        this.rating = rating;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

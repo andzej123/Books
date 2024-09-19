@@ -7,9 +7,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Year;
 import java.util.HashSet;
@@ -19,8 +17,16 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "books")
 public class Book {
+
+    public Book(String title, Integer year, String author) {
+        this.title = title;
+        this.year = year;
+        this.author = author;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
