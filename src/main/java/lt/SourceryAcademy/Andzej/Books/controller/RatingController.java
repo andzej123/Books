@@ -1,5 +1,6 @@
 package lt.SourceryAcademy.Andzej.Books.controller;
 
+import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,12 @@ public class RatingController {
 
     @PostMapping("/book/{bookId}")
     @Validated
-    public ResponseEntity<String> rateBook(@PathVariable Integer bookId, @RequestParam Integer ratingValue) {
+    public BookResponseDto rateBook(@PathVariable Integer bookId, @RequestParam Integer ratingValue) {
         return ratingService.rateBook(bookId, ratingValue);
     }
 
     @GetMapping("/book/{bookId}")
-    public Map<String, Object> getBookRating(@PathVariable Integer bookId) {
-        return ratingService.getBookRating(bookId);
+    public Map<String, Object> getBookRatingAndTimesRated(@PathVariable Integer bookId) {
+        return ratingService.getBookRatingAndTimesRated(bookId);
     }
 }
