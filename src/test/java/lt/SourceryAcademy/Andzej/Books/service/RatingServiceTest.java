@@ -3,7 +3,7 @@ package lt.SourceryAcademy.Andzej.Books.service;
 import lt.SourceryAcademy.Andzej.Books.exceptions.BookNotFoundException;
 import lt.SourceryAcademy.Andzej.Books.mapper.BookMapper;
 import lt.SourceryAcademy.Andzej.Books.model.Book;
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
+import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.model.Rating;
 import lt.SourceryAcademy.Andzej.Books.repository.BookRepository;
 import lt.SourceryAcademy.Andzej.Books.repository.RatingRepository;

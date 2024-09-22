@@ -1,9 +1,10 @@
 package lt.SourceryAcademy.Andzej.Books.service;
 
+import lt.SourceryAcademy.Andzej.Books.dto.BookDto;
 import lt.SourceryAcademy.Andzej.Books.exceptions.BookNotFoundException;
 import lt.SourceryAcademy.Andzej.Books.mapper.BookMapper;
 import lt.SourceryAcademy.Andzej.Books.model.Book;
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
+import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.model.Rating;
 import lt.SourceryAcademy.Andzej.Books.repository.BookRepository;
 import lt.SourceryAcademy.Andzej.Books.repository.RatingRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -20,13 +20,11 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
-    private final RatingRepository ratingRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository, BookMapper bookMapper, RatingRepository ratingRepository) {
+    public BookService(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
-        this.ratingRepository = ratingRepository;
     }
 
     public List<BookResponseDto> getAllBooks() {
@@ -36,29 +34,23 @@ public class BookService {
                 .toList();
     }
 
-    public BookResponseDto addBook(Book requestBook) {
+    public BookResponseDto addBook(BookDto requestBook) {
         Book book = new Book();
         book.setTitle(requestBook.getTitle());
         book.setYear(requestBook.getYear());
         book.setAuthor(requestBook.getAuthor());
-        bookRepository.save(book);
 
-        Set<Rating> requestRatings = requestBook.getRatings();
-        Rating tempRating = null;
-        if (requestRatings != null) {
-            tempRating = requestRatings.stream().findFirst().orElse(null);
-        }
-        if (tempRating != null) {
+        Integer requestRating = requestBook.getRating();
+        if (requestRating != null) {
             Rating rating = new Rating();
-            rating.setRating(tempRating.getRating());
+            rating.setRating(requestRating);
             book.add(rating);
-            ratingRepository.save(rating);
         }
-
+        bookRepository.save(book);
         return bookMapper.bookToBookResponseDto(book);
     }
 
-    public BookResponseDto updateBook(Integer id, Book requestBook) {
+    public BookResponseDto updateBook(Integer id, BookDto requestBook) {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new BookNotFoundException("Book not found with id - " + id)
         );
@@ -73,8 +65,9 @@ public class BookService {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new BookNotFoundException("Book not found with id - " + id)
         );
+        BookResponseDto response = bookMapper.bookToBookResponseDto(book);
         bookRepository.deleteById(id);
-        return bookMapper.bookToBookResponseDto(book);
+        return response;
     }
 
     public List<BookResponseDto> getBooksByTitle(String bookTitle) {

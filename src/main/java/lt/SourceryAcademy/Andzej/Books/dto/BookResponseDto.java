@@ -1,4 +1,4 @@
-package lt.SourceryAcademy.Andzej.Books.model;
+package lt.SourceryAcademy.Andzej.Books.dto;
 
 import lombok.*;
 

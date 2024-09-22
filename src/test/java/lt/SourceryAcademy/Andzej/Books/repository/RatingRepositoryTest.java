@@ -7,15 +7,28 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 class RatingRepositoryTest {
+
+    @Container
+    @ServiceConnection
+    static MySQLContainer<?> mySQLContainer
+            = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"));
 
     @Autowired
     private RatingRepository ratingRepository;
@@ -25,6 +38,13 @@ class RatingRepositoryTest {
 
     @Test
     @Order(1)
+    void canEstablishedConnection() {
+        assertThat(mySQLContainer.isCreated()).isTrue();
+        assertThat(mySQLContainer.isRunning()).isTrue();
+    }
+
+    @Test
+    @Order(2)
     public void saveRatingTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
@@ -38,7 +58,7 @@ class RatingRepositoryTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void getBookRatingTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
@@ -54,7 +74,7 @@ class RatingRepositoryTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void ratingsCountTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
@@ -69,7 +89,7 @@ class RatingRepositoryTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void deleteBookWithRatingsTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");

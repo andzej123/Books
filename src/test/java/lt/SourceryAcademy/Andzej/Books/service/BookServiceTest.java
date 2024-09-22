@@ -1,9 +1,10 @@
 package lt.SourceryAcademy.Andzej.Books.service;
 
+import lt.SourceryAcademy.Andzej.Books.dto.BookDto;
 import lt.SourceryAcademy.Andzej.Books.exceptions.BookNotFoundException;
 import lt.SourceryAcademy.Andzej.Books.mapper.BookMapper;
 import lt.SourceryAcademy.Andzej.Books.model.Book;
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
+import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.model.Rating;
 import lt.SourceryAcademy.Andzej.Books.repository.BookRepository;
 import lt.SourceryAcademy.Andzej.Books.repository.RatingRepository;
@@ -30,8 +31,6 @@ class BookServiceTest {
     @Mock
     private BookRepository bookRepository;
     @Mock
-    private RatingRepository ratingRepository;
-    @Mock
     private BookMapper bookMapper;
     private BookService bookService;
     @Captor
@@ -39,7 +38,7 @@ class BookServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookService = new BookService(bookRepository, bookMapper, ratingRepository);
+        bookService = new BookService(bookRepository, bookMapper);
     }
 
     @Test
@@ -54,13 +53,12 @@ class BookServiceTest {
     @Test
     void addNewBookTest() {
         //given
-        Book book = Book.builder()
+        BookDto book = BookDto.builder()
                 .title("Good Book")
                 .year(2005)
                 .author("Ordinary Author")
+                .rating(4)
                 .build();
-        Rating rating = new Rating(4);
-        book.add(rating);
         //when
         bookService.addBook(book);
         //then
@@ -75,39 +73,39 @@ class BookServiceTest {
     @Test
     void updateBookThrowBookNotFoundExceptionTest() {
         //given
-        Book book = Book.builder()
-                .id(1)
+        Integer bookId = 1;
+        BookDto book = BookDto.builder()
                 .title("Good Book")
                 .year(2005)
                 .author("Ordinary Author")
                 .build();
         //when
-        when(bookRepository.findById(book.getId())).thenReturn(Optional.empty());
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
         //then
-        assertThatThrownBy(() -> bookService.updateBook(book.getId(), book)
+        assertThatThrownBy(() -> bookService.updateBook(bookId, book)
         ).isInstanceOf(BookNotFoundException.class)
-                .hasMessage("Book not found with id - " + book.getId());
+                .hasMessage("Book not found with id - " + bookId);
         verify(bookRepository, never()).save(any());
     }
 
     @Test
     void updateBookTest() {
         //given
+        Integer bookId = 1;
         Book book = Book.builder()
-                .id(1)
+                .id(bookId)
                 .title("Good Book")
                 .year(2005)
                 .author("Ordinary Author")
                 .build();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
-        Book updateBook = Book.builder()
-                .id(1)
+        BookDto updateBook = BookDto.builder()
                 .title("Book about animals")
                 .year(2007)
                 .author("Sam Wells")
                 .build();
         //when
-        bookService.updateBook(book.getId(), updateBook);
+        bookService.updateBook(bookId, updateBook);
         //then
         verify(bookRepository).save(argumentCaptor.capture());
         Book bookCaptured = argumentCaptor.getValue();

@@ -1,9 +1,8 @@
 package lt.SourceryAcademy.Andzej.Books.controller;
 
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
+import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

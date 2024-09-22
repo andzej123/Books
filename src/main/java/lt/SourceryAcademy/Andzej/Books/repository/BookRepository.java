@@ -1,14 +1,12 @@
 package lt.SourceryAcademy.Andzej.Books.repository;
 
 import lt.SourceryAcademy.Andzej.Books.model.Book;
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {

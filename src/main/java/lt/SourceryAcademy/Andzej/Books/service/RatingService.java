@@ -3,13 +3,11 @@ package lt.SourceryAcademy.Andzej.Books.service;
 import lt.SourceryAcademy.Andzej.Books.exceptions.BookNotFoundException;
 import lt.SourceryAcademy.Andzej.Books.mapper.BookMapper;
 import lt.SourceryAcademy.Andzej.Books.model.Book;
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
+import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.model.Rating;
 import lt.SourceryAcademy.Andzej.Books.repository.BookRepository;
 import lt.SourceryAcademy.Andzej.Books.repository.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

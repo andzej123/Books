@@ -2,14 +2,14 @@ package lt.SourceryAcademy.Andzej.Books.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
+import lt.SourceryAcademy.Andzej.Books.dto.BookDto;
 import lt.SourceryAcademy.Andzej.Books.model.Book;
-import lt.SourceryAcademy.Andzej.Books.model.BookResponseDto;
+import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
 import lt.SourceryAcademy.Andzej.Books.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -67,12 +67,12 @@ public class BookController {
     }
 
     @PostMapping
-    public BookResponseDto addBook(@Valid @RequestBody Book book) {
+    public BookResponseDto addBook(@Valid @RequestBody BookDto book) {
         return bookService.addBook(book);
     }
 
     @PatchMapping("/{id}")
-    public BookResponseDto updateBook(@PathVariable Integer id, @Valid @RequestBody Book book) {
+    public BookResponseDto updateBook(@PathVariable Integer id, @Valid @RequestBody BookDto book) {
         return bookService.updateBook(id, book);
     }
 
