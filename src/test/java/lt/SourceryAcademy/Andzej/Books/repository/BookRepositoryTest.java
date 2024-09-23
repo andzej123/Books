@@ -6,9 +6,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.assertj.core.api.Assertions;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -21,7 +19,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
@@ -36,14 +33,12 @@ class BookRepositoryTest {
     private BookRepository bookRepository;
 
     @Test
-    @Order(1)
     void canEstablishedConnection() {
         assertThat(mySQLContainer.isCreated()).isTrue();
         assertThat(mySQLContainer.isRunning()).isTrue();
     }
 
     @Test
-    @Order(2)
     public void saveBookTest() {
         //Action
         Book book = new Book("Good Book", 2005, "Henry Stevens");
@@ -57,7 +52,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(3)
     public void getBookTest() {
         //Action
         Book book = new Book("Good Book", 2005, "Henry Stevens");
@@ -69,7 +63,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(4)
     public void getListOfBooksTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -82,7 +75,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(5)
     public void getBooksByTitleTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -95,7 +87,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(6)
     public void getBooksByYearTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -108,7 +99,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(7)
     public void getBooksByAuthorTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -121,7 +111,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(8)
     public void getBooksIdsWithRatingHigherThanTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -140,7 +129,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(9)
     public void getBooksIdsWithRatingLowerThanTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -159,7 +147,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(10)
     public void getBooksByYearFromToTest() {
         //Action
         Book book1 = new Book("Good Book", 2005, "Henry Stevens");
@@ -174,7 +161,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(11)
     public void updateBookTest() {
         //Action
         Book book = new Book("Awesome Book", 2007, "Matt Peters");
@@ -196,7 +182,6 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Order(12)
     public void deleteBookTest() {
         //Action
         Book book = new Book("Awesome Book", 2007, "Matt Peters");

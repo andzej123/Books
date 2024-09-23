@@ -1,10 +1,8 @@
 package lt.SourceryAcademy.Andzej.Books.controller;
 
-import jakarta.annotation.PostConstruct;
 import lt.SourceryAcademy.Andzej.Books.dto.BookDto;
-import lt.SourceryAcademy.Andzej.Books.model.Book;
 import lt.SourceryAcademy.Andzej.Books.dto.BookResponseDto;
-import org.junit.Before;
+import lt.SourceryAcademy.Andzej.Books.repository.BookRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,9 +11,8 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -25,11 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -45,27 +38,28 @@ class BookControllerTest {
 
     @Autowired
     TestRestTemplate testRestTemplate;
+    @Autowired
+    BookRepository bookRepository;
+
+    private BookDto book;
+    private ResponseEntity<List<BookResponseDto>> booksResponseEntity;
 
     @BeforeEach
     public void setup() {
         testRestTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-    }
 
-
-    @Test
-    void canEstablishedConnection() {
-        assertThat(mySQLContainer.isCreated()).isTrue();
-        assertThat(mySQLContainer.isRunning()).isTrue();
-    }
-
-    @Test
-    void addNewBookAndGetAllBooksTest() {
         // create new book request object and add to the repository
-        BookDto book = BookDto.builder()
+        book = BookDto.builder()
                 .title("Animals planet")
                 .year(2005)
                 .author("Sam Bright")
                 .rating(4)
+                .build();
+        BookDto book2 = BookDto.builder()
+                .title("Cars of the world")
+                .year(2002)
+                .author("Steve Miller")
+                .rating(2)
                 .build();
         ResponseEntity<BookResponseDto> response = testRestTemplate.exchange(
                 API_BOOKS_PATH,
@@ -74,9 +68,16 @@ class BookControllerTest {
                 BookResponseDto.class
         );
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ResponseEntity<BookResponseDto> responseOfBook2 = testRestTemplate.exchange(
+                API_BOOKS_PATH,
+                POST,
+                new HttpEntity<>(book2),
+                BookResponseDto.class
+        );
+        assertThat(responseOfBook2.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         //get list of all books from repository
-        ResponseEntity<List<BookResponseDto>> booksResponseEntity = testRestTemplate.exchange(
+        booksResponseEntity = testRestTemplate.exchange(
                 API_BOOKS_PATH,
                 GET,
                 null,
@@ -84,8 +85,18 @@ class BookControllerTest {
                 }
         );
         assertThat(booksResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 
-        // check if list contains book we created and added in the beginning of the test
+    @Test
+    void canEstablishedConnection() {
+        assertThat(mySQLContainer.isCreated()).isTrue();
+        assertThat(mySQLContainer.isRunning()).isTrue();
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    void addNewBookAndGetAllBooksTest() {
+        // check if list contains book we created and added in the setup of the test
         BookResponseDto bookResponse = Objects.requireNonNull(booksResponseEntity.getBody())
                 .stream()
                 .filter(b -> b.getTitle().equals(book.getTitle()))
@@ -95,39 +106,14 @@ class BookControllerTest {
         assertThat(bookResponse.getYear()).isEqualTo(book.getYear());
         assertThat(bookResponse.getTitle()).isEqualTo(book.getTitle());
         assertThat(bookResponse.getRating()).isEqualTo(Double.valueOf(book.getRating()));
+        bookRepository.deleteAll();
     }
 
     @Test
     void updateBookTest() {
-        // create new book request object and add to the repository
-        String title = "Best book in the world";
-        BookDto addNewBook = BookDto.builder()
-                .title(title)
-                .year(2005)
-                .author("Sam Bright")
-                .rating(4)
-                .build();
-        ResponseEntity<BookResponseDto> addBookResponse = testRestTemplate.exchange(
-                API_BOOKS_PATH,
-                POST,
-                new HttpEntity<>(addNewBook),
-                BookResponseDto.class
-        );
-        assertThat(addBookResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        //get list of all books from repository
-        ResponseEntity<List<BookResponseDto>> booksListResponseEntity = testRestTemplate.exchange(
-                API_BOOKS_PATH,
-                GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-        assertThat(booksListResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        // inside the list, find the book we added and get it id that is auto-generated
-        Integer bookId = Objects.requireNonNull(booksListResponseEntity.getBody()).stream()
-                .filter(b -> b.getTitle().equals(title))
+        // find the book we added in the setup and get it id that is auto-generated
+        Integer bookId = Objects.requireNonNull(booksResponseEntity.getBody()).stream()
+                .filter(b -> b.getTitle().equals(book.getTitle()))
                 .map(BookResponseDto::getId)
                 .findFirst()
                 .orElseThrow();
@@ -164,45 +150,20 @@ class BookControllerTest {
         assertThat(updatedBook.getYear()).isEqualTo(bookToUpdate.getYear());
         assertThat(updatedBook.getTitle()).isEqualTo(bookToUpdate.getTitle());
         assertThat(updatedBook.getRating()).isNotEqualTo(bookToUpdate.getRating());
+        bookRepository.deleteAll();
     }
 
     @Test
     void deleteBookTest() {
-        // create new book request object and add to the repository
-        String title = "Best book in the world";
-        BookDto addNewBook = BookDto.builder()
-                .title(title)
-                .year(2005)
-                .author("Sam Bright")
-                .rating(4)
-                .build();
-        ResponseEntity<BookResponseDto> addBookResponse = testRestTemplate.exchange(
-                API_BOOKS_PATH,
-                POST,
-                new HttpEntity<>(addNewBook),
-                BookResponseDto.class
-        );
-        assertThat(addBookResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        //get list of all books from repository
-        ResponseEntity<List<BookResponseDto>> booksListResponseEntity = testRestTemplate.exchange(
-                API_BOOKS_PATH,
-                GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-        assertThat(booksListResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
         // inside the list, find the book we added and get it id that is auto-generated
-        Integer bookId = Objects.requireNonNull(booksListResponseEntity.getBody()).stream()
-                .filter(b -> b.getTitle().equals(title))
+        Integer bookId = Objects.requireNonNull(booksResponseEntity.getBody()).stream()
+                .filter(b -> b.getTitle().equals(book.getTitle()))
                 .map(BookResponseDto::getId)
                 .findFirst()
                 .orElseThrow();
 
         // delete book from repository and check for response code 200
-        ResponseEntity<BookResponseDto> deleteResponse =  testRestTemplate.exchange(
+        ResponseEntity<BookResponseDto> deleteResponse = testRestTemplate.exchange(
                 API_BOOKS_PATH + "/" + bookId,
                 DELETE,
                 null,
@@ -220,6 +181,125 @@ class BookControllerTest {
         );
         assertThat(customerByIdResponse.getStatusCode())
                 .isEqualTo(HttpStatus.BAD_REQUEST);
+        bookRepository.deleteAll();
     }
 
+    @Test
+    void filterBookByTitleTest() {
+        String queryKey = "bookTitle";
+        String queryValue = "als";
+        ResponseEntity<List<BookResponseDto>> response = testRestTemplate.exchange(
+                API_BOOKS_PATH + "/filter?" + queryKey + "=" + queryValue,
+                GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+        List<BookResponseDto> result = response.getBody();
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    void filterBookByYearTest() {
+        String queryKey = "bookYear";
+        int queryValue = 2005;
+        ResponseEntity<List<BookResponseDto>> response = testRestTemplate.exchange(
+                API_BOOKS_PATH + "/filter?" + queryKey + "=" + queryValue,
+                GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+        List<BookResponseDto> result = response.getBody();
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    void filterBookByYearFromToTest() {
+        String queryKey1 = "yearFrom";
+        String queryKey2 = "yearTo";
+        int queryValue1 = 2004;
+        int queryValue2 = 2005;
+        String requestUrl = API_BOOKS_PATH + "/filter?" +
+                queryKey1 + "=" + queryValue1 +
+                "&" + queryKey2 + "=" + queryValue2;
+        ResponseEntity<List<BookResponseDto>> response = testRestTemplate.exchange(
+                requestUrl,
+                GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+        List<BookResponseDto> result = response.getBody();
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    void filterBookByAuthorTest() {
+        String queryKey = "bookAuthor";
+        String queryValue = "Mil";
+        ResponseEntity<List<BookResponseDto>> response = testRestTemplate.exchange(
+                API_BOOKS_PATH + "/filter?" + queryKey + "=" + queryValue,
+                GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+        List<BookResponseDto> result = response.getBody();
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    void filterBookByRatingLowerThanTest() {
+        String queryKey = "ratingLowerThan";
+        double queryValue = 2.5;
+        ResponseEntity<List<BookResponseDto>> response = testRestTemplate.exchange(
+                API_BOOKS_PATH + "/filter?" + queryKey + "=" + queryValue,
+                GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+        List<BookResponseDto> result = response.getBody();
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        bookRepository.deleteAll();
+    }
+
+    @Test
+    void filterBookByRatingHigherThanTest() {
+        String queryKey = "ratingHigherThan";
+        double queryValue = 2.5;
+        ResponseEntity<List<BookResponseDto>> response = testRestTemplate.exchange(
+                API_BOOKS_PATH + "/filter?" + queryKey + "=" + queryValue,
+                GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertThat(response.getStatusCode())
+                .isEqualTo(HttpStatus.OK);
+        List<BookResponseDto> result = response.getBody();
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        bookRepository.deleteAll();
+    }
 }

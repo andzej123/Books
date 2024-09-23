@@ -19,7 +19,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
@@ -35,16 +34,13 @@ class RatingRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
 
-
     @Test
-    @Order(1)
     void canEstablishedConnection() {
         assertThat(mySQLContainer.isCreated()).isTrue();
         assertThat(mySQLContainer.isRunning()).isTrue();
     }
 
     @Test
-    @Order(2)
     public void saveRatingTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
@@ -58,7 +54,6 @@ class RatingRepositoryTest {
     }
 
     @Test
-    @Order(3)
     public void getBookRatingTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
@@ -74,7 +69,6 @@ class RatingRepositoryTest {
     }
 
     @Test
-    @Order(4)
     public void ratingsCountTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
@@ -89,7 +83,6 @@ class RatingRepositoryTest {
     }
 
     @Test
-    @Order(5)
     public void deleteBookWithRatingsTest() {
         //Action
         Book book = new Book("Test Title", 1999, "Test Author");
