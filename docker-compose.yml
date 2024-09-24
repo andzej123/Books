@@ -1,0 +1,34 @@
+services:
+  mysql:
+    container_name: mysql-books
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: myspringbooks
+      MYSQL_USER: books
+      MYSQL_PASSWORD: books
+      MYSQL_ROOT_PASSWORD: student
+    ports:
+      - "3307:3306"
+    volumes:
+      - mybooksdata:/var/lib/mysql
+    networks:
+      - spring-boot-network-books
+
+  spring-boot-app:
+    container_name: spring-books
+    image: spring/books
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysql-books:3306/myspringbooks?createDatabaseIfNotExist=true
+    ports:
+      - "8088:8080"
+    networks:
+      - spring-boot-network-books
+    depends_on:
+      - mysql
+
+volumes:
+  mybooksdata:
+
+networks:
+  spring-boot-network-books:
+    driver: bridge
