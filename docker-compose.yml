@@ -13,6 +13,11 @@ services:
       - mybooksdata:/var/lib/mysql
     networks:
       - spring-boot-network-books
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   spring-boot-app:
     container_name: spring-books
@@ -24,7 +29,8 @@ services:
     networks:
       - spring-boot-network-books
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
 volumes:
   mybooksdata:
