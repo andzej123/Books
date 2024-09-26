@@ -97,7 +97,7 @@ mvn clean test
 
 ## Application Deployment
 
-Application is deployed [here](https://books-latest.onrender.com).
+Application is deployed <a href="https://books-latest.onrender.com" target="_blank">here</a>
 
 *Note: It takes about 2-3 minutes for the application to start due to the free tier on the host.*
 
@@ -106,4 +106,4 @@ Application is deployed [here](https://books-latest.onrender.com).
 The future goals for this project will be determined by the Product Owner. Stay tuned for updates! :)
 
 ## Contact
-Andžej Demidovič on [LinkedIn](https://www.linkedin.com/in/andzej-demidovic/)
+Andžej Demidovič on <a href="https://www.linkedin.com/in/andzej-demidovic/" target="_blank">LinkedIn</a>
