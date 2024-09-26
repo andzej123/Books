@@ -21,12 +21,13 @@ public class BookMapper {
         if (rating == null) {
             rating = 0.0;
         }
+        Double roundedRating = Math.round(rating * 10.0) / 10.0;
         return new BookResponseDto(
                 book.getId(),
                 book.getTitle(),
                 book.getYear(),
                 book.getAuthor(),
-                rating
+                roundedRating
         );
     }
 }
