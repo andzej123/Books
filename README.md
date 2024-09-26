@@ -14,7 +14,7 @@ criteria.
 ## Installation
 ### Prerequisites
 - Docker
-- Java Jdk-17 or higher
+- Java JDK 17 or higher
 
 ### Tools Used
 - Microsoft Windows 10
@@ -26,10 +26,10 @@ criteria.
 
 ### Steps
 1. **Clone the repository:**
-```
-https://github.com/andzej123/Books.git
-```
-2. **Navigate to the project directory:** Open it in your IDE terminal
+    ```
+    https://github.com/asdfgs.git
+    ```
+2. **Navigate to the project directory:** Open it in your IDE or terminal
 3. **Package the application:**
     ```
     ./mvnw clean package
@@ -46,26 +46,64 @@ https://github.com/andzej123/Books.git
     docker-compose up
     ```
 
+6. **Try out the application:**
+    - Open your browser or Postman.
+    - Send a GET request to the following endpoint:
+
+       ```
+       http://localhost:8088/api/v1/books
+       ```
+
+    - You should see a list of books in the response.
+
+    *Note: The application runs on port 8088.*
+
 ## Usage
 ### API Endpoints
 
 **Books**
+
 - **GET** `/api/v1/books` - Retrieve a list of books
 - **GET** `/api/v1/books/{id}` - Retrieve a single book by id
 - **POST** `/api/v1/books` - Add a new book
 - **PATCH** `/api/v1/books/{id}` - Update an existing book
 - **DELETE** `/api/v1/books/{id}` - Delete a book from database
-Book Filters
-- GET /api/v1/books/filter:
-- ?bookTitle={book title param} - Filter books by full or partial title
-- ?bookYear={book year param} - Filter books by release year
-- ?bookAuthor={book author param} - Filter books by author full name or beginning
-- ?ratingHigherThan={book rating param} - Filter books with higher rating than provided 
-- ?ratingLowerThan={book rating param} - Filter books with lower rating than provided 
-- ?yearFrom={year from param}&yearTo={year to param} - Filter books by release year from year to year inclusive
-Ratings 
-- GET /api/v1/ratings/book/{book id} - Retrieve a book rating and how many times it has been rated
-- POST /api/v1/ratings/book/{book id} - Rate a book
+
+**Book Filters**
+  
+- GET `/api/v1/books/filter` : 
+    - `?bookTitle={book title param}` - Filter books by full or partial title
+    - `?bookYear={book year param}` - Filter books by release year
+    - `?bookAuthor={book author param}` - Filter books by author full name or beginning
+    - `?ratingHigherThan={book rating param}` - Filter books with higher rating than provided 
+    - `?ratingLowerThan={book rating param}` - Filter books with lower rating than provided 
+    - `?yearFrom={year from param}&yearTo={year to param}` - Filter books by release year from year to year inclusive
+
+**Ratings**
+
+- GET `/api/v1/ratings/book/{book id}` - Retrieve a book rating and how many times it has been rated
+- POST `/api/v1/ratings/book/{book id}` - Rate a book
+
+## Testing
+
+This project includes a comprehensive suite of unit and integration tests using JUnit 5.
+
+### Running Tests
+
+To run the tests, you can use the following command:
+```
+mvn clean test
+```
+
+## Application Deployment
+
+Application is deployed [here](https://bosdfgsrender.com).
+
+*Note: It takes about 2-3 minutes for the application to start due to the free tier on the host.*
+
+## Future Goals
+
+The future goals for this project will be determined by the Product Owner. Stay tuned for updates! :)
 
 ## Contact
-    My [LinkedIn](https://pages.github.com/).
+Ansdfgič on [LinkedIn](https://wwwsdfgsic/)
