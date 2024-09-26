@@ -27,7 +27,7 @@ criteria.
 ### Steps
 1. **Clone the repository:**
     ```
-    https://github.com/asdfgs.git
+    https://github.com/andzej123/Books.git
     ```
 2. **Navigate to the project directory:** Open it in your IDE or terminal
 3. **Package the application:**
@@ -97,7 +97,7 @@ mvn clean test
 
 ## Application Deployment
 
-Application is deployed [here](https://bosdfgsrender.com).
+Application is deployed [here](https://books-latest.onrender.com).
 
 *Note: It takes about 2-3 minutes for the application to start due to the free tier on the host.*
 
@@ -106,4 +106,4 @@ Application is deployed [here](https://bosdfgsrender.com).
 The future goals for this project will be determined by the Product Owner. Stay tuned for updates! :)
 
 ## Contact
-Ansdfgič on [LinkedIn](https://wwwsdfgsic/)
+Andžej Demidovič on [LinkedIn](https://www.linkedin.com/in/andzej-demidovic/)
